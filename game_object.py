@@ -1,4 +1,4 @@
-# This class establish the fundemantal rules for all of the the class that I will create. Meaning this will be the parent class of every other class I created.
+# This class establish the fundemantal rules for all of the the class that I will create. Meaning this will be the parent class of every other class I created that will go to the main loop.
 # The rules are: Every class must know how to update and draw themselve.
 
 from abc import ABC, abstractmethod

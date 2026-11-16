@@ -1,6 +1,6 @@
 import pygame
 
-from entity import Entity
+from .entity import Entity
 
 class Hero(Entity):
     def __init__(self, image_path, start_x, start_y, speed, health):

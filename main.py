@@ -1,7 +1,7 @@
 # Example file showing a basic pygame "game loop"
 import pygame
-from hero import Hero
-from background import Background
+from render.hero import Hero
+from render.background import Background
 
 # pygame setup
 pygame.init()
