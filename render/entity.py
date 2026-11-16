@@ -40,4 +40,8 @@ class Entity(GameObject):
 
     def draw(self, screen):
         screen.blit(self.image, self.rect)
+
+        # Temporary hit box
+        pygame.draw.rect(screen, "blue", self.rect, 2)
+        pygame.draw.rect(screen, "red", self.hitbox, 2)
     
