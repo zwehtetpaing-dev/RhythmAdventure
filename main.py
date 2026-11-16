@@ -9,11 +9,12 @@ screen = pygame.display.set_mode((1280, 720))
 clock = pygame.time.Clock()
 running = True
 
-# hero
+# Create game objects
 hero = Hero("assets/entities/hero/Hero.png", 100, 100, 3, 100)
-
-# background
 background = Background("assets/background/Entrance.png")
+
+# Unified polymorphic dispatch
+game_objects = [background, hero]
 
 while running:
     # poll for events
@@ -25,15 +26,16 @@ while running:
     # CHECK THE KEYS
     keys = pygame.key.get_pressed()
     
-    # This gives you that classic, smooth top-down RPG movement!
-    hero.update(keys)
+    # Update every object
+    for obj in game_objects:
+        obj.update(keys)
 
     # fill the screen with a color to wipe away anything from last frame
     screen.fill("black")
 
     # RENDER YOUR GAME HERE
-    background.draw(screen)
-    hero.draw(screen)
+    for obj in game_objects:
+        obj.draw(screen)
 
     # flip() the display to put your work on screen
     pygame.display.flip()
