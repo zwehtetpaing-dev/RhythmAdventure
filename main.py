@@ -16,6 +16,7 @@ Hitbox3 = pygame.Rect(726, 0, 194, 393)
 Hitbox4 = pygame.Rect(920, 0, 359, 476)
 Hitbox5 = pygame.Rect(0, 638, 64, 81)
 Hitbox6 = pygame.Rect(1183, 638, 98, 81)
+greenboxes = [Hitbox1, Hitbox2, Hitbox3, Hitbox4, Hitbox5, Hitbox6]
 ##### Cut scene hitbox
 Hitbox7 = pygame.Rect(520, 0, 206, 318)
 Hitbox8 = pygame.Rect(0, 476, 32, 162)
@@ -23,8 +24,9 @@ Hitbox9 = pygame.Rect(1248, 476, 32, 162)
 
 
 # Create game objects
-hero = Hero("assets/entities/hero/Hero.png", 100, 100, 3, 100)
+hero = Hero("assets/entities/hero/Hero.png", 500, 500, 3, 200, obstacles=greenboxes)
 background = Background("assets/background/Entrance.png")
+
 
 # Unified polymorphic dispatch
 game_objects = [background, hero]
@@ -50,6 +52,8 @@ while running:
     for obj in game_objects:
         obj.draw(screen)
 
+    ######## Test collision
+
     ######## Test draw
     pygame.draw.rect(screen, "green", Hitbox1, 2)
     pygame.draw.rect(screen, "green", Hitbox2, 2)
@@ -60,6 +64,8 @@ while running:
     pygame.draw.rect(screen, "yellow", Hitbox7, 2)
     pygame.draw.rect(screen, "yellow", Hitbox8, 2)
     pygame.draw.rect(screen, "yellow", Hitbox9, 2)
+
+    # print(hero.hitbox.x)
 
     # flip() the display to put your work on screen
     pygame.display.flip()
