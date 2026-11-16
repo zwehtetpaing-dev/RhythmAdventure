@@ -1,6 +1,7 @@
 import pygame
+from game_object import GameObject
 
-class Entity:
+class Entity(GameObject):
     def __init__ (self, image_path, start_x, start_y, speed, health):
         # Load the image and transform the scale to 200 x 200
         self.image = pygame.transform.scale(pygame.image.load(image_path), (200,200))

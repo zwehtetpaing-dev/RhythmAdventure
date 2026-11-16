@@ -26,7 +26,7 @@ while running:
     keys = pygame.key.get_pressed()
     
     # This gives you that classic, smooth top-down RPG movement!
-    hero.move(keys)
+    hero.update(keys)
 
     # fill the screen with a color to wipe away anything from last frame
     screen.fill("black")
