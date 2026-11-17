@@ -1,4 +1,4 @@
-# Rhythm Adventure
+# Rhythm Adventure Beta
 
 **Rhythm Adventure** is a 2D top-down RPG and 6-lane rhythm-battle hybrid built in Python using **Pygame Community Edition (`pygame-ce`)**. Explore the overworld as a slime hero, trigger interactive story encounters, and defend your HP in beat-synchronized rhythm combat.
 
