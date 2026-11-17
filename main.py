@@ -1,7 +1,8 @@
 # Example file showing a basic pygame "game loop"
 import pygame
-from render.hero import Hero
-from render.background import Background
+from src.hero import Hero
+from src.background import Background
+from assets.map_data import MAP_COLLISIONS
 
 # pygame setup
 pygame.init()
@@ -9,22 +10,19 @@ screen = pygame.display.set_mode((1280, 720))
 clock = pygame.time.Clock()
 running = True
 
-##### Obstacle Hitbox Testing
-Hitbox1 = pygame.Rect(0, 0, 326, 476)
-Hitbox2 = pygame.Rect(326, 0, 194, 393)
-Hitbox3 = pygame.Rect(726, 0, 194, 393)
-Hitbox4 = pygame.Rect(920, 0, 359, 476)
-Hitbox5 = pygame.Rect(0, 638, 64, 81)
-Hitbox6 = pygame.Rect(1183, 638, 98, 81)
-greenboxes = [Hitbox1, Hitbox2, Hitbox3, Hitbox4, Hitbox5, Hitbox6]
-##### Cut scene hitbox
-Hitbox7 = pygame.Rect(520, 0, 206, 318)
-Hitbox8 = pygame.Rect(0, 476, 32, 162)
-Hitbox9 = pygame.Rect(1248, 476, 32, 162)
+
+# We read the coordinates from our data file and turn them into pygame.Rect objects.
+obstacles = []
+for coords in MAP_COLLISIONS["entrance_obstacles"]:
+    obstacles.append(pygame.Rect(coords))
+
+cutscenes = []
+for coords in MAP_COLLISIONS["entrance_triggers"]:
+    cutscenes.append(pygame.Rect(coords))
 
 
 # Create game objects
-hero = Hero("assets/entities/hero/Hero.png", 500, 500, 3, 200, obstacles=greenboxes)
+hero = Hero("assets/entities/hero/Hero.png", 500, 500, 3, 200, obstacles=obstacles)
 background = Background("assets/background/Entrance.png")
 
 
@@ -48,28 +46,12 @@ while running:
     # fill the screen with a color to wipe away anything from last frame
     screen.fill("black")
 
-    # RENDER YOUR GAME HERE
+    # RENDER YOUR GAME HERE ===============================================
     for obj in game_objects:
         obj.draw(screen)
 
-    ######## Test collision
-
-    ######## Test draw
-    pygame.draw.rect(screen, "green", Hitbox1, 2)
-    pygame.draw.rect(screen, "green", Hitbox2, 2)
-    pygame.draw.rect(screen, "green", Hitbox3, 2)
-    pygame.draw.rect(screen, "green", Hitbox4, 2)
-    pygame.draw.rect(screen, "green", Hitbox5, 2)
-    pygame.draw.rect(screen, "green", Hitbox6, 2)
-    pygame.draw.rect(screen, "yellow", Hitbox7, 2)
-    pygame.draw.rect(screen, "yellow", Hitbox8, 2)
-    pygame.draw.rect(screen, "yellow", Hitbox9, 2)
-
-    # print(hero.hitbox.x)
-
     # flip() the display to put your work on screen
     pygame.display.flip()
-
     clock.tick(60)  # limits FPS to 60
 
 pygame.quit()
