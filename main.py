@@ -4,6 +4,7 @@ import pygame
 from src.loader import load_map, load_character
 from src.cutscene_manager import CutsceneManager
 from src.textbox import TextBox
+from src.wasd_overlay import WASDOverlay
 
 # pygame setup
 pygame.init()
@@ -27,8 +28,11 @@ cutscene_manager = CutsceneManager(hero, cutscenes)
 # 4. Create the TextBox (The Face), telling it to watch the manager
 textbox = TextBox(cutscene_manager)
 
-# 5. Pack everything for the polymorphic dispatch loop
-game_objects = [background, hero, cutscene_manager, textbox]
+# 5. WASD UI overlay
+wasd_overlay = WASDOverlay()
+
+# 6. Pack everything for the polymorphic dispatch loop
+game_objects = [background, hero, cutscene_manager, textbox, wasd_overlay]
 # ===================================================================================
 
 while running:
