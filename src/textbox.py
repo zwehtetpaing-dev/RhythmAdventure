@@ -1,6 +1,6 @@
-# src/textbox.py
 import pygame
 from game_object import GameObject
+from assets.dialogue_data import DIALOGUE_DATA
 
 class TextBox(GameObject):
     def __init__(self, cutscene_manager):
@@ -12,11 +12,7 @@ class TextBox(GameObject):
         
         # This is our script! It translates the A, B, C signals from the manager 
         # into actual names and environmental lore.
-        self.dialogues = {
-            "A": {"name": "???", "text": "Beware the slimes ahead..."},
-            "B": {"name": "???", "text": "Only those with rhythm may pass."},
-            "C": {"name": "???", "text": "The Boss Room lies beyond this point!"}
-        }
+        self.dialogues = DIALOGUE_DATA
 
     def update(self, keys):
         pass

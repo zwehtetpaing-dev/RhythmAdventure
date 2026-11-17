@@ -9,21 +9,24 @@ class CutsceneManager(GameObject):
         self.active_scene = None 
 
     def update(self, keys):
-        # Every single frame, we start by assuming the hero is NOT touching a scene
+        # 1. Always check where the hero is standing, no matter what
         touching_scene = None
         scene_names = ["A", "B", "C"]
         
-        # Check all the invisible tape marks
         for index, trigger_box in enumerate(self.triggers):
-            # We still inflate the hitbox slightly so we can sense it while bumping into it
             if self.hero.hitbox.inflate(4, 4).colliderect(trigger_box):
-                # We found one! Remember the letter and stop searching.
                 touching_scene = scene_names[index]
                 break
 
-        # Finally, we update our sticky note. 
-        # If the hero stepped away, touching_scene will be None, erasing the note!
+        # Update our sticky note
         self.active_scene = touching_scene
+
+        # 2. If they are touching A AND they press space, trigger the door!
+        if self.active_scene == "A" and keys[pygame.K_SPACE]:
+            print("Entering the room")
+            
+            # Push them back slightly just to prove the button press registered!
+            self.hero.hitbox.y += 10
 
     def draw(self, screen):
         pass
