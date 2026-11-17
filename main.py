@@ -65,10 +65,25 @@ while running:
         for obj in game_objects:
             obj.update(keys)
 
-        screen.fill("black")
+        # Listen for the stage manager's signal to start the boss fight!
+        if cutscene_manager.action == "START_RHYTHM":
+            game_state = "RHYTHM_BATTLE"
+            
+            pygame.mixer.music.stop()
+            
+            # Erase the signal so it doesn't constantly re-trigger
+            cutscene_manager.action = None
 
+        screen.fill("black")
         for obj in game_objects:
             obj.draw(screen)
+
+    # ================= RHYTHM BATTLE =================
+    elif game_state == "RHYTHM_BATTLE":
+        # For now, we completely pause the exploration objects and 
+        # just draw a pure black screen.
+        screen.fill("black")
+        # (Later, we will update and draw your rhythm notes here!)
 
     pygame.display.flip()
     clock.tick(60)

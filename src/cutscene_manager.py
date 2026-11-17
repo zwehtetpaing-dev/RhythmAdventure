@@ -7,6 +7,7 @@ class CutsceneManager(GameObject):
         self.hero = hero
         self.triggers = triggers
         self.active_scene = None 
+        self.action = None
 
     def update(self, keys):
         # 1. Always check where the hero is standing, no matter what
@@ -23,10 +24,10 @@ class CutsceneManager(GameObject):
 
         # 2. If they are touching A AND they press space, trigger the door!
         if self.active_scene == "A" and keys[pygame.K_SPACE]:
-            print("Entering the room")
-            
+            print("Transitioning to Rhythm Mode...")
+            self.action = "START_RHYTHM"
             # Push them back slightly just to prove the button press registered!
-            self.hero.hitbox.y += 10
+            # self.hero.hitbox.y += 10
 
     def draw(self, screen):
         pass
