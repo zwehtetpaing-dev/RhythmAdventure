@@ -5,6 +5,7 @@ from src.loader import load_map, load_character
 from src.cutscene_manager import CutsceneManager
 from src.textbox import TextBox
 from src.wasd_overlay import WASDOverlay
+from src.menu import MainMenu
 
 # pygame setup
 pygame.init()
@@ -13,25 +14,29 @@ clock = pygame.time.Clock()
 running = True
 
 # ============================ Object creator ====================================
+# Menu
+main_menu = MainMenu()
+game_state = "MENU"  # The game starts in the lobby!
+
 current_room = "Entrance"
 
-# 1. Load the Map
+# Load the Map
 background, obstacles, cutscenes = load_map(current_room)
 all_physical_walls = obstacles + cutscenes
 
-# 2. Load the Character 
+# Load the Character 
 hero = load_character(all_physical_walls)
 
-# 3. Hire the Stage Manager (The Brain)
+# Hire the Stage Manager (The Brain)
 cutscene_manager = CutsceneManager(hero, cutscenes)
 
-# 4. Create the TextBox (The Face), telling it to watch the manager
+# Create the TextBox (The Face), telling it to watch the manager
 textbox = TextBox(cutscene_manager)
 
-# 5. WASD UI overlay
+# WASD UI overlay
 wasd_overlay = WASDOverlay()
 
-# 6. Pack everything for the polymorphic dispatch loop
+# Pack everything for the polymorphic dispatch loop
 game_objects = [background, hero, cutscene_manager, textbox, wasd_overlay]
 # ===================================================================================
 
@@ -41,22 +46,31 @@ while running:
         if event.type == pygame.QUIT:
             running = False
 
-    # CHECK THE KEYS
+    # Check the keys
     keys = pygame.key.get_pressed()
     
-    # Update every object
-    for obj in game_objects:
-        obj.update(keys)
+    # ================= THE MENU =================
+    if game_state == "MENU":
+        main_menu.update(keys)
+        main_menu.draw(screen)
+        
+        # Listen for the menu's action signal
+        if main_menu.action == "START":
+            game_state = "PLAYING" # Open the curtains!
+        elif main_menu.action == "EXIT":
+            running = False        # Close the window!
+            
+    # ================= IN GAME =================
+    elif game_state == "PLAYING":
+        for obj in game_objects:
+            obj.update(keys)
 
-    # fill the screen with a color to wipe away anything from last frame
-    screen.fill("black")
+        screen.fill("black")
 
-    # Draw every object
-    for obj in game_objects:
-        obj.draw(screen)
+        for obj in game_objects:
+            obj.draw(screen)
 
-    # flip() the display to put your work on screen
     pygame.display.flip()
-    clock.tick(60)  # limits FPS to 60
+    clock.tick(60)
 
 pygame.quit()
