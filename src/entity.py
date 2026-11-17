@@ -41,26 +41,44 @@ class Entity(GameObject):
 
     # Health bar creation
     def draw_health_bar(self, screen):
-        """Overrides the Entity health bar to stick to the top-left screen corner."""
-        # 1. Make the player's health bar nice and big
+        """Overrides the Entity health bar to draw a full UI dashboard."""
+        
+        # 1. THE PORTRAIT
+        # We take whatever picture the slime is currently using, shrink a copy to 50x50, 
+        # and stick it in the top left corner.
+        portrait = pygame.transform.scale(self.image, (50, 50))
+        screen.blit(portrait, (20, 20))
+        
+        # 2. THE LABEL MAKER (Font setup)
+        # We tell Pygame to grab a default system font, size 28.
+        font = pygame.font.SysFont(None, 28)
+        
+        # 3. THE "HP" TEXT
+        # We print "HP" onto a transparent sticker in white ink, and place it next to the portrait.
+        hp_sticker = font.render("HP", True, "white")
+        screen.blit(hp_sticker, (80, 35))
+        
+        # 4. THE HEALTH TAPE
+        bar_x = 120
+        bar_y = 35
         bar_width = 200
         bar_height = 20
         
-        # 2. Fix the coordinates to the top-left corner of the screen window
-        bar_x = 20
-        bar_y = 20
-        
-        # 3. Calculate the health percentage
         health_ratio = max(0, self._health) / self.max_health
         
-        # 4. Create the rectangles using our fixed screen coordinates
         red_rect = pygame.Rect(bar_x, bar_y, bar_width, bar_height)
         green_rect = pygame.Rect(bar_x, bar_y, bar_width * health_ratio, bar_height)
         
-        # 5. Draw the tape (Red background, Green health, and a White border)
         pygame.draw.rect(screen, "red", red_rect)
         pygame.draw.rect(screen, "green", green_rect)
-        pygame.draw.rect(screen, "#293e2b", red_rect, 3)
+        pygame.draw.rect(screen, "#293e2b", red_rect, 2) # A crisp 2-pixel white border
+        
+        # 5. THE HEALTH NUMBERS
+        # We print the exact numbers (like "50 / 100") onto another sticker, 
+        # and place it right after the end of the health bar.
+        health_text = f"{int(self._health)}"
+        numbers_sticker = font.render(health_text, True, "white")
+        screen.blit(numbers_sticker, (bar_x + bar_width + 15, 35))
 
     def draw(self, screen):
         screen.blit(self.image, self.rect)
