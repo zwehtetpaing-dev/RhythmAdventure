@@ -1,8 +1,7 @@
 # Example file showing a basic pygame "game loop"
 import pygame
-from src.hero import Hero
-from src.background import Background
-from assets.map_data import MAP_COLLISIONS
+
+from src.loader import load_map, load_character
 
 # pygame setup
 pygame.init()
@@ -10,24 +9,18 @@ screen = pygame.display.set_mode((1280, 720))
 clock = pygame.time.Clock()
 running = True
 
+# ============================ Object creator ====================================
+current_room = "Entrance"
 
-# We read the coordinates from our data file and turn them into pygame.Rect objects.
-obstacles = []
-for coords in MAP_COLLISIONS["entrance_obstacles"]:
-    obstacles.append(pygame.Rect(coords))
+# 1. Load the Map
+background, obstacles, cutscenes = load_map(current_room)
 
-cutscenes = []
-for coords in MAP_COLLISIONS["entrance_triggers"]:
-    cutscenes.append(pygame.Rect(coords))
+# 2. Load the Character (and hand them the walls they need to bump into)
+hero = load_character(obstacles)
 
-
-# Create game objects
-hero = Hero("assets/entities/hero/Hero.png", 500, 500, 3, 200, obstacles=obstacles)
-background = Background("assets/background/Entrance.png")
-
-
-# Unified polymorphic dispatch
+# 3. Pack everything for the polymorphic dispatch loop
 game_objects = [background, hero]
+# ===================================================================================
 
 while running:
     # poll for events
@@ -46,7 +39,7 @@ while running:
     # fill the screen with a color to wipe away anything from last frame
     screen.fill("black")
 
-    # RENDER YOUR GAME HERE ===============================================
+    # Draw every object
     for obj in game_objects:
         obj.draw(screen)
 
