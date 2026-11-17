@@ -36,6 +36,13 @@ while running:
     for obj in game_objects:
         obj.update(keys)
 
+    # Detecting cut scenes.
+    for trigger_box in cutscenes:
+        if hero.hitbox.colliderect(trigger_box):
+            print("Cutscene detected! The hero is standing on the mark.")
+        else:
+            print("Nope")
+
     # fill the screen with a color to wipe away anything from last frame
     screen.fill("black")
 

@@ -44,7 +44,6 @@ class Hero(Entity):
         # Checking obstacle collisions in x axis
         for box in self.obstacles:
             if self.hitbox.colliderect(box):
-
                 if dx > 0:       # Walking right, hit left edge of a wall
                     self.hitbox.right = box.left # 
                 elif dx < 0:     # Walking left, hit right edge of a wall
