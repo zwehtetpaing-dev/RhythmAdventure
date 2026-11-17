@@ -4,6 +4,7 @@
 MAP_DATA = {
     "Entrance": {
         "image_path": "assets/background/Entrance.png",
+        "bgm_path": "assets/music/Entrance_Theme.mp3",
         "obstacles": [
             (0, 0, 326, 476),
             (326, 0, 194, 393),
@@ -21,6 +22,7 @@ MAP_DATA = {
     
     "BossRoom": {
         "image_path": "assets/background/BossRoom.png",
+        "bgm_path": "",
         "obstacles": [
             # DummySquare can drop the Boss Room wall coordinates here later!
         ],

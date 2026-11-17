@@ -18,6 +18,11 @@ class Hero(Entity):
         self.animator = Animator(frame_paths=slime_pictures, animation_speed=15)
         self.image = self.animator.get_current_image()
 
+        # Sound
+        self.move_sound = pygame.mixer.Sound("assets/sound/Slime_Move.mp3")
+        self.move_sound.set_volume(0.3) 
+        self.is_playing_sound = False
+
     # Move
     def update(self, keys):
 
@@ -73,7 +78,7 @@ class Hero(Entity):
                     self.hitbox.bottom = box.top
                 elif dy < 0:     # Walking up, hit bottom edge of a wall
                     self.hitbox.top = box.bottom
-                    
+
 
         # Adjusting character rect model
         self.rect.x = self.hitbox.centerx - 100
@@ -82,3 +87,18 @@ class Hero(Entity):
         # Activate animation
         self.animator.update(is_moving)
         self.image = self.animator.get_current_image()
+
+        # --- INSERT THE SOUND LOGIC HERE ---
+        if is_moving:
+            # If the slime is moving but the sound IS NOT playing yet...
+            if not self.is_playing_sound:
+                # Play it on an infinite loop (-1)
+                self.move_sound.play(-1)
+                self.is_playing_sound = True
+        else:
+            # If the slime stops moving, but the sound IS still playing...
+            if self.is_playing_sound:
+                # Stop the track immediately!
+                self.move_sound.stop()
+                self.is_playing_sound = False
+        # -----------------------------------

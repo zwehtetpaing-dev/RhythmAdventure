@@ -4,24 +4,22 @@ from src.background import Background
 from assets.map_data import MAP_DATA
 
 def load_map(room_name):
-    """The set builder: grabs the background and all the collision boxes."""
     room_info = MAP_DATA[room_name]
 
-    # Build the physical walls
-    obstacles = []
-    for coords in room_info["obstacles"]:
-        obstacles.append(pygame.Rect(coords))
-
-    # Build the invisible triggers for cutscenes
-    cutscenes = []
-    for coords in room_info["cutscenes"]:
-        cutscenes.append(pygame.Rect(coords))
+    # Build the walls and cutscenes
+    obstacles = [pygame.Rect(coords) for coords in room_info["obstacles"]]
+    cutscenes = [pygame.Rect(coords) for coords in room_info["cutscenes"]]
 
     # Paint the background
     background = Background(room_info["image_path"])
 
-    return background, obstacles, cutscenes
+    # We check if the room has a song attached to it
+    if "bgm_path" in room_info:
+        pygame.mixer.music.load(room_info["bgm_path"])
+        pygame.mixer.music.set_volume(0.2)
+        pygame.mixer.music.play(-1) 
 
+    return background, obstacles, cutscenes
 
 def load_character(obstacles):
     """The casting director: brings the hero in and gives them the map's walls."""
