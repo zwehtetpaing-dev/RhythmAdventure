@@ -5,13 +5,12 @@ from game_object import GameObject
 class MainMenu(GameObject):
     def __init__(self):
         self.title_font = pygame.font.SysFont(None, 120)
-        self.option_font = pygame.font.SysFont(None, 80)
+        self.option_font = pygame.font.SysFont(None, 60)
         
         self.options = ["Start Game", "Exit"]
-        self.selected_index = 0  # 0 is Start, 1 is Exit
-        self.action = None       # Our sticky note for main.py
+        self.selected_index = 0  
+        self.action = None       
         
-        # Memory flags to prevent the menu from flying too fast
         self.w_was_pressed = False
         self.s_was_pressed = False
 
@@ -19,7 +18,6 @@ class MainMenu(GameObject):
         # --- Handle W (Move Up) ---
         if keys[pygame.K_w]:
             if not self.w_was_pressed:
-                # Move up, and if we go above 0, wrap around to the bottom!
                 self.selected_index -= 1
                 if self.selected_index < 0:
                     self.selected_index = len(self.options) - 1
@@ -30,7 +28,6 @@ class MainMenu(GameObject):
         # --- Handle S (Move Down) ---
         if keys[pygame.K_s]:
             if not self.s_was_pressed:
-                # Move down, and if we go past the bottom, wrap around to 0!
                 self.selected_index += 1
                 if self.selected_index >= len(self.options):
                     self.selected_index = 0
@@ -46,26 +43,43 @@ class MainMenu(GameObject):
                 self.action = "EXIT"
 
     def draw(self, screen):
-        screen.fill("black")
+        # A dark charcoal background so the earthy UI boxes pop
+        screen.fill((20, 20, 20))
         
-        # Draw the Title perfectly centered
-        # (Since your screen is 1280 wide, x=640 is the exact center)
-        title_surface = self.title_font.render("RHYTHM ADVENTURE", True, "white")
+        # --- COLOR PALETTE (Matched to your TextBox) ---
+        border_color = (180, 140, 90) # Golden-wood
+        bg_color = (40, 35, 35)       # Dark earthy brown
+        highlight_bg = (60, 50, 45)   # Lighter brown for the selected button
+        text_color = "#F5F5F5"        # Soft Pearl off-white
+        
+        # --- DRAW THE TITLE ---
+        # We paint the title in the golden-wood color to tie the room together
+        title_surface = self.title_font.render("RHYTHM ADVENTURE", True, border_color)
         title_rect = title_surface.get_rect(center=(640, 200))
         screen.blit(title_surface, title_rect)
         
-        # Draw the Options
+        # --- DRAW THE UI BUTTONS ---
         for index, option_text in enumerate(self.options):
-            # If this is the selected option, make it green and put arrows around it!
+            
+            # Determine the box color and text based on whether it is currently selected
             if index == self.selected_index:
-                color = "green"
-                display_text = f"> {option_text} <"
+                current_bg = highlight_bg
+                display_text = f">  {option_text}  <"
             else:
-                color = "white"
+                current_bg = bg_color
                 display_text = option_text
                 
-            text_surface = self.option_font.render(display_text, True, color)
+            # 1. Math out the box dimensions
+            # We make each button 400px wide and 80px tall
+            button_rect = pygame.Rect(0, 0, 400, 80)
+            # Center it horizontally, and push it down 120px for each index
+            button_rect.center = (640, 400 + (index * 120))
             
-            # We stack them vertically by pushing the Y coordinate down based on the index
-            text_rect = text_surface.get_rect(center=(640, 400 + (index * 100)))
+            # 2. Paint the wooden box
+            pygame.draw.rect(screen, current_bg, button_rect)
+            pygame.draw.rect(screen, border_color, button_rect, 4)
+            
+            # 3. Stamp the soft pearl text perfectly in the middle of the box
+            text_surface = self.option_font.render(display_text, True, text_color)
+            text_rect = text_surface.get_rect(center=button_rect.center)
             screen.blit(text_surface, text_rect)
