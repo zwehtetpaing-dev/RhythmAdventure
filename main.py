@@ -6,6 +6,7 @@ from src.cutscene_manager import CutsceneManager
 from src.textbox import TextBox
 from src.wasd_overlay import WASDOverlay
 from src.menu import MainMenu
+from src.rhythm_board import RhythmBoard
 
 # pygame setup
 pygame.init()
@@ -20,24 +21,18 @@ game_state = "MENU"  # The game starts in the lobby!
 
 current_room = "Entrance"
 
-# Load the Map
+# IN GAME
 background, obstacles, cutscenes = load_map(current_room)
 all_physical_walls = obstacles + cutscenes
-
-# Load the Character 
 hero = load_character(all_physical_walls)
-
-# Hire the Stage Manager (The Brain)
 cutscene_manager = CutsceneManager(hero, cutscenes)
-
-# Create the TextBox (The Face), telling it to watch the manager
 textbox = TextBox(cutscene_manager)
-
-# WASD UI overlay
 wasd_overlay = WASDOverlay()
-
-# Pack everything for the polymorphic dispatch loop
 game_objects = [background, hero, cutscene_manager, textbox, wasd_overlay]
+
+# RHYTHYM BATTLE 
+rhythm_board = RhythmBoard()
+
 # ===================================================================================
 
 while running:
@@ -68,7 +63,7 @@ while running:
         # Listen for the stage manager's signal to start the boss fight!
         if cutscene_manager.action == "START_RHYTHM":
             game_state = "RHYTHM_BATTLE"
-            
+
             pygame.mixer.music.stop()
             
             # Erase the signal so it doesn't constantly re-trigger
@@ -80,10 +75,9 @@ while running:
 
     # ================= RHYTHM BATTLE =================
     elif game_state == "RHYTHM_BATTLE":
-        # For now, we completely pause the exploration objects and 
-        # just draw a pure black screen.
+        rhythm_board.update(keys)
         screen.fill("black")
-        # (Later, we will update and draw your rhythm notes here!)
+        rhythm_board.draw(screen)
 
     pygame.display.flip()
     clock.tick(60)
