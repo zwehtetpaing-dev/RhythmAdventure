@@ -1,104 +1,73 @@
 import pygame
-
 from .entity import Entity
 from .animation import Animator
+
 
 class Hero(Entity):
     def __init__(self, image_path, start_x, start_y, speed, health, obstacles):
         self.hitbox = pygame.Rect(start_x, start_y, 60, 40)
-        # The list of obstacles
         self.obstacles = obstacles
+        self.walk_bounds = pygame.Rect(0, 80, 1280, 640)
         super().__init__(image_path, start_x, start_y, speed, health)
 
-        # Animation logic
         slime_pictures = [
-            "assets/entities/hero/Hero_squeesh.png",  # Flat 
-            "assets/entities/hero/Hero_idle.png"   # Tall 
+            "assets/entities/hero/Hero_squeesh.png",
+            "assets/entities/hero/Hero_idle.png",
         ]
         self.animator = Animator(frame_paths=slime_pictures, animation_speed=15)
         self.image = self.animator.get_current_image()
 
-        # Sound
         self.move_sound = pygame.mixer.Sound("assets/sound/Slime_Move.mp3")
-        self.move_sound.set_volume(0.3) 
+        self.move_sound.set_volume(0.3)
         self.is_playing_sound = False
 
-    # Move
-    def update(self, keys):
+    def stop_sound(self):
+        if self.is_playing_sound:
+            self.move_sound.stop()
+            self.is_playing_sound = False
 
-        # We start by assuming the slime is standing still
-        is_moving = False
+    def _update_sound(self, is_moving):
+        if is_moving and not self.is_playing_sound:
+            self.move_sound.play(-1)
+            self.is_playing_sound = True
+        elif not is_moving and self.is_playing_sound:
+            self.stop_sound()
 
-        dx = 0
-        if keys[pygame.K_a]:
-            dx = -self._speed
-            is_moving = True
-        if keys[pygame.K_d]:
-            dx = self._speed
-            is_moving = True
-            
-        # When I hit A and D, dx will change the position of hitbox.
-        self.hitbox.x += dx
+    def update(self, keys, events=None):
+        direction = pygame.math.Vector2(
+            keys[pygame.K_d] - keys[pygame.K_a],
+            keys[pygame.K_s] - keys[pygame.K_w],
+        )
 
-        # Checking the y-axis screen border
-        if self.hitbox.right > 1280:
-            self.hitbox.right = 1280
-        if self.hitbox.left < 0:
-            self.hitbox.left = 0
-        
-        # Checking obstacle collisions in x axis
+        is_moving = direction.length_squared() > 0
+        if is_moving:
+            direction = direction.normalize() * self._speed
+
+        # Move & resolve collisions on X axis
+        self.hitbox.x += round(direction.x)
         for box in self.obstacles:
             if self.hitbox.colliderect(box):
-                if dx > 0:       # Walking right, hit left edge of a wall
-                    self.hitbox.right = box.left # 
-                elif dx < 0:     # Walking left, hit right edge of a wall
+                if direction.x > 0:
+                    self.hitbox.right = box.left
+                elif direction.x < 0:
                     self.hitbox.left = box.right
 
-        dy = 0
-        if keys[pygame.K_w]:
-            dy = -self._speed
-            is_moving = True
-        if keys[pygame.K_s]:
-            dy = self._speed
-            is_moving = True
-            
-        # When I hit W and S, dy will change the position of hitbox.
-        self.hitbox.y += dy
-
-        # Checking the y-axis screen border
-        if self.hitbox.bottom > 720:
-            self.hitbox.bottom = 720
-        if self.hitbox.top < 80:
-            self.hitbox.top = 80
-        
-        # Checking obstacle collisions in y axis
+        # Move & resolve collisions on Y axis
+        self.hitbox.y += round(direction.y)
         for box in self.obstacles:
             if self.hitbox.colliderect(box):
-                if dy > 0:       # Walking down, hit top edge of a wall
+                if direction.y > 0:
                     self.hitbox.bottom = box.top
-                elif dy < 0:     # Walking up, hit bottom edge of a wall
+                elif direction.y < 0:
                     self.hitbox.top = box.bottom
 
+        # Keep hero inside the playable screen area
+        self.hitbox.clamp_ip(self.walk_bounds)
 
-        # Adjusting character rect model
+        # Sync sprite rect with hitbox
         self.rect.x = self.hitbox.centerx - 100
         self.rect.y = self.hitbox.centery - 140
 
-        # Activate animation
         self.animator.update(is_moving)
         self.image = self.animator.get_current_image()
-
-        # --- INSERT THE SOUND LOGIC HERE ---
-        if is_moving:
-            # If the slime is moving but the sound IS NOT playing yet...
-            if not self.is_playing_sound:
-                # Play it on an infinite loop (-1)
-                self.move_sound.play(-1)
-                self.is_playing_sound = True
-        else:
-            # If the slime stops moving, but the sound IS still playing...
-            if self.is_playing_sound:
-                # Stop the track immediately!
-                self.move_sound.stop()
-                self.is_playing_sound = False
-        # -----------------------------------
+        self._update_sound(is_moving)

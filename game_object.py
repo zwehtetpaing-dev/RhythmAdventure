@@ -3,10 +3,12 @@
 
 from abc import ABC, abstractmethod
 
+
 class GameObject(ABC):
-    
+    """Base contract for every game entity and UI element."""
+
     @abstractmethod
-    def update(self, keys):
+    def update(self, keys, events=None):
         pass
 
     @abstractmethod
