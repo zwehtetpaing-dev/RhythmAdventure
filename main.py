@@ -7,6 +7,7 @@ from src.textbox import TextBox
 from src.wasd_overlay import WASDOverlay
 from src.menu import MainMenu
 from src.rhythm_board import RhythmBoard
+from src.rhythm_manager import RhythmManager
 
 # pygame setup
 pygame.init()
@@ -32,7 +33,7 @@ game_objects = [background, hero, cutscene_manager, textbox, wasd_overlay]
 
 # RHYTHYM BATTLE 
 rhythm_board = RhythmBoard()
-
+rhythm_manager = RhythmManager(rhythm_board, "Boss_1")
 # ===================================================================================
 
 while running:
@@ -45,6 +46,9 @@ while running:
     keys = pygame.key.get_pressed()
     
     # ================= THE MENU =================
+    if keys[pygame.K_ESCAPE]:
+        game_state = "MENU"
+
     if game_state == "MENU":
         main_menu.update(keys)
         main_menu.draw(screen)
@@ -63,10 +67,16 @@ while running:
         # Listen for the stage manager's signal to start the boss fight!
         if cutscene_manager.action == "START_RHYTHM":
             game_state = "RHYTHM_BATTLE"
-
+            # 1. Stop the exploration music
             pygame.mixer.music.stop()
             
-            # Erase the signal so it doesn't constantly re-trigger
+            # 2. Hand the DJ the boss music and press play! 
+            pygame.mixer.music.load("assets/music/Boss_music.mp3")
+            pygame.mixer.music.play()
+            
+            # --- THE FIX: Force the slime to stop squishing! ---
+            hero.move_sound.stop()
+            hero.is_playing_sound = False
             cutscene_manager.action = None
 
         screen.fill("black")
@@ -75,9 +85,22 @@ while running:
 
     # ================= RHYTHM BATTLE =================
     elif game_state == "RHYTHM_BATTLE":
+        # 1. Update the objects
         rhythm_board.update(keys)
+        rhythm_manager.update(keys)  # The brain reads the stopwatch and spawns notes!
+
+        # check if the end of the battle
+        if rhythm_manager.is_finished:
+            pygame.mixer.music.stop()
+            pygame.time.wait(1000)
+            game_state = "PLAYING"
+
+        # 2. Erase the old frame
         screen.fill("black")
+        
+        # 3. Draw the highway first, then draw the notes on top of it!
         rhythm_board.draw(screen)
+        rhythm_manager.draw(screen)
 
     pygame.display.flip()
     clock.tick(60)
