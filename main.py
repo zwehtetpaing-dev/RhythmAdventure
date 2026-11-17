@@ -3,6 +3,7 @@ import pygame
 
 from src.loader import load_map, load_character
 from src.cutscene_manager import CutsceneManager
+from src.textbox import TextBox
 
 # pygame setup
 pygame.init()
@@ -15,18 +16,19 @@ current_room = "Entrance"
 
 # 1. Load the Map
 background, obstacles, cutscenes = load_map(current_room)
-
-# Combine the lists so the hero treats cutscenes as physical walls!
 all_physical_walls = obstacles + cutscenes
 
-# 2. Load the Character (hand them the combined list)
+# 2. Load the Character 
 hero = load_character(all_physical_walls)
 
-# 3. Hire the Stage Manager 
+# 3. Hire the Stage Manager (The Brain)
 cutscene_manager = CutsceneManager(hero, cutscenes)
 
-# 4. Pack everything for the polymorphic dispatch loop
-game_objects = [background, hero, cutscene_manager]
+# 4. Create the TextBox (The Face), telling it to watch the manager
+textbox = TextBox(cutscene_manager)
+
+# 5. Pack everything for the polymorphic dispatch loop
+game_objects = [background, hero, cutscene_manager, textbox]
 # ===================================================================================
 
 while running:

@@ -6,20 +6,24 @@ class CutsceneManager(GameObject):
     def __init__(self, hero, triggers):
         self.hero = hero
         self.triggers = triggers
+        self.active_scene = None 
 
     def update(self, keys):
+        # Every single frame, we start by assuming the hero is NOT touching a scene
+        touching_scene = None
         scene_names = ["A", "B", "C"]
-        standing_on_mark = False
-
+        
+        # Check all the invisible tape marks
         for index, trigger_box in enumerate(self.triggers):
-            # We inflate the hero's hitbox by 4 pixels (2 on each edge). 
-            # This lets them "touch" the trigger while still being blocked by it!
+            # We still inflate the hitbox slightly so we can sense it while bumping into it
             if self.hero.hitbox.inflate(4, 4).colliderect(trigger_box):
-                print(scene_names[index])
-                standing_on_mark = True
-                
-        if not standing_on_mark:
-            print("Nope")
+                # We found one! Remember the letter and stop searching.
+                touching_scene = scene_names[index]
+                break
+
+        # Finally, we update our sticky note. 
+        # If the hero stepped away, touching_scene will be None, erasing the note!
+        self.active_scene = touching_scene
 
     def draw(self, screen):
         pass
