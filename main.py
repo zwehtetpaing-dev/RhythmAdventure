@@ -13,16 +13,19 @@ running = True
 # ============================ Object creator ====================================
 current_room = "Entrance"
 
-# Load the Map
+# 1. Load the Map
 background, obstacles, cutscenes = load_map(current_room)
 
-# Load the Character (and hand them the walls they need to bump into)
-hero = load_character(obstacles)
+# Combine the lists so the hero treats cutscenes as physical walls!
+all_physical_walls = obstacles + cutscenes
 
-# Activate cutscene manager
+# 2. Load the Character (hand them the combined list)
+hero = load_character(all_physical_walls)
+
+# 3. Hire the Stage Manager 
 cutscene_manager = CutsceneManager(hero, cutscenes)
 
-# Pack everything for the polymorphic dispatch loop
+# 4. Pack everything for the polymorphic dispatch loop
 game_objects = [background, hero, cutscene_manager]
 # ===================================================================================
 

@@ -4,18 +4,22 @@ from game_object import GameObject
 
 class CutsceneManager(GameObject):
     def __init__(self, hero, triggers):
-        # The manager just needs to watch the hero and the invisible tape marks
         self.hero = hero
         self.triggers = triggers
 
     def update(self, keys):
-        # The manager silently watches all the invisible tape marks
-        for trigger_box in self.triggers:
-            if self.hero.hitbox.colliderect(trigger_box):
-                print("Cutscene detected! The hero is standing on the mark.")
-            else:
-                print("Nope")
+        scene_names = ["A", "B", "C"]
+        standing_on_mark = False
+
+        for index, trigger_box in enumerate(self.triggers):
+            # We inflate the hero's hitbox by 4 pixels (2 on each edge). 
+            # This lets them "touch" the trigger while still being blocked by it!
+            if self.hero.hitbox.inflate(4, 4).colliderect(trigger_box):
+                print(scene_names[index])
+                standing_on_mark = True
+                
+        if not standing_on_mark:
+            print("Nope")
 
     def draw(self, screen):
-        # It doesn't need to draw anything yet, so we just pass!
         pass
