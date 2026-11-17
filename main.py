@@ -49,7 +49,7 @@ while running:
     # Draw every object
     for obj in game_objects:
         obj.draw(screen)
-
+        
     # flip() the display to put your work on screen
     pygame.display.flip()
     clock.tick(60)  # limits FPS to 60
