@@ -27,6 +27,6 @@ def load_character(obstacles):
     """The casting director: brings the hero in and gives them the map's walls."""
     # Right now it just loads the Hero, but later you could pass in a 'character_name' 
     # to load different party members or enemies!
-    hero = Hero("assets/entities/hero/Hero.png", 500, 500, 3, 200, obstacles=obstacles)
+    hero = Hero("assets/entities/hero/Hero_idle.png", 500, 500, 3, 200, obstacles=obstacles)
     
     return hero

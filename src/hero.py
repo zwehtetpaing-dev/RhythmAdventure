@@ -1,6 +1,7 @@
 import pygame
 
 from .entity import Entity
+from .animation import Animator
 
 class Hero(Entity):
     def __init__(self, image_path, start_x, start_y, speed, health, obstacles):
@@ -9,13 +10,27 @@ class Hero(Entity):
         self.obstacles = obstacles
         super().__init__(image_path, start_x, start_y, speed, health)
 
+        # Animation logic
+        slime_pictures = [
+            "assets/entities/hero/Hero_squeesh.png",  # Flat 
+            "assets/entities/hero/Hero_idle.png"   # Tall 
+        ]
+        self.animator = Animator(frame_paths=slime_pictures, animation_speed=15)
+        self.image = self.animator.get_current_image()
+
     # Move
     def update(self, keys):
+
+        # We start by assuming the slime is standing still
+        is_moving = False
+
         dx = 0
         if keys[pygame.K_a]:
             dx = -self._speed
+            is_moving = True
         if keys[pygame.K_d]:
             dx = self._speed
+            is_moving = True
             
         # When I hit A and D, dx will change the position of hitbox.
         self.hitbox.x += dx
@@ -38,8 +53,10 @@ class Hero(Entity):
         dy = 0
         if keys[pygame.K_w]:
             dy = -self._speed
+            is_moving = True
         if keys[pygame.K_s]:
             dy = self._speed
+            is_moving = True
             
         # When I hit W and S, dy will change the position of hitbox.
         self.hitbox.y += dy
@@ -62,3 +79,7 @@ class Hero(Entity):
         # Adjusting character rect model
         self.rect.x = self.hitbox.centerx - 100
         self.rect.y = self.hitbox.centery - 140
+
+        # Activate animation
+        self.animator.update(is_moving)
+        self.image = self.animator.get_current_image()
